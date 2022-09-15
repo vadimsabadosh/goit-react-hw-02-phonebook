@@ -2,27 +2,31 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 export default class ContactForm extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      number: '',
-    };
-    this.addContact = this.addContact.bind(this);
-  }
-  onChange(e) {
+  state = {
+    name: '',
+    number: '',
+  };
+
+  onChange = e => {
     this.setState({
       [e.target.name]: e.target.value,
     });
-  }
+  };
 
-  addContact() {
-    this.props.onAddContact(this.state.name, this.state.number);
-    this.setState({
-      name: '',
-      number: '',
-    });
-  }
+  addContact = () => {
+    const isExists = this.props.contacts.find(
+      item => item.name === this.state.name
+    );
+    if (!isExists) {
+      this.props.onAddContact(this.state.name, this.state.number);
+      this.setState({
+        name: '',
+        number: '',
+      });
+    } else {
+      alert(`${this.state.name} is already in contacts`);
+    }
+  };
   render() {
     return (
       <div>
@@ -60,4 +64,11 @@ export default class ContactForm extends Component {
 }
 ContactForm.propTypes = {
   onAddContact: PropTypes.func.isRequired,
+  contacts: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+    })
+  ),
 };
